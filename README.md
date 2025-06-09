@@ -19,6 +19,7 @@ Este projeto consiste em criar um sistema android com CRUD de usuário e suas at
 
 ## **👨‍💻 Autor** / Aluno envolvido no projeto
 Desenvolvido por **Júlia Kuroishi**
+
 Entre em contato: [juliabkuroishi@gmail.com](mailto:juliabkuroishi@gmail.com)  
 [LinkedIn](https://www.linkedin.com/in/julia-kuroishi-244bb0248/)
 
