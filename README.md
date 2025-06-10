@@ -1,6 +1,9 @@
 # Projeto Planner
 
-Este projeto consiste em criar um sistema android com CRUD de usuário e suas atividades.
+Este projeto consiste em criar um Planner online com possibilidade de cadastrar usuário, autenticar login e criar atividades.
+
+## Papéis e Uusários
+- usuário pode cadastrar-se, criar uma atividade, editaá-la e deletá-la.
 
 ## Requisitos
 ### Requisitos funcionais
