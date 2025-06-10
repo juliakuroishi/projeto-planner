@@ -20,6 +20,14 @@ Este projeto consiste em criar um Planner online com possibilidade de cadastrar 
 - o sistema deve estar de acordo com as diretrizes báscias de acessibilidade web
 - o sistema deve implementar o hash para a senha
 
+### Entradas
+- cadastro
+- login
+- criar tarefa
+
+### Processamento
+- CRUD de atividades
+
 ## **👨‍💻 Autor** / Aluno envolvido no projeto
 Desenvolvido por **Júlia Kuroishi**
 
