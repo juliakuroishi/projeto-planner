@@ -9,11 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.projetoplanner.databinding.FragmentFirstBinding;
+import com.example.projetoplanner.databinding.FragmentLoginBinding;
 
 public class LoginFragment extends Fragment {
 
-    private FragmentFirstBinding binding;
+    private FragmentLoginBinding binding;
 
     @Override
     public View onCreateView(
@@ -21,7 +21,7 @@ public class LoginFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }
@@ -31,7 +31,7 @@ public class LoginFragment extends Fragment {
 
         binding.buttonFirst.setOnClickListener(v ->
                 NavHostFragment.findNavController(LoginFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
+                        .navigate(R.id.action_LoginFragment_to_CadastroFragment)
         );
     }
 

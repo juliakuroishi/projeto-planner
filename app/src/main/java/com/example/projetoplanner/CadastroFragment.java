@@ -9,11 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.projetoplanner.databinding.FragmentSecondBinding;
+import com.example.projetoplanner.databinding.FragmentCadastroBinding;
 
 public class CadastroFragment extends Fragment {
 
-    private FragmentSecondBinding binding;
+    private FragmentCadastroBinding binding;
 
     @Override
     public View onCreateView(
@@ -21,7 +21,7 @@ public class CadastroFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentSecondBinding.inflate(inflater, container, false);
+        binding = FragmentCadastroBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }
@@ -31,7 +31,7 @@ public class CadastroFragment extends Fragment {
 
         binding.buttonSecond.setOnClickListener(v ->
                 NavHostFragment.findNavController(CadastroFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment)
+                        .navigate(R.id.action_CadastroFragment_to_LoginFragment)
         );
     }
 
