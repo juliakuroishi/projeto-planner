@@ -31,7 +31,8 @@ public interface TaskDao {
 
     @Query("SELECT * FROM Task WHERE id = :taskId LIMIT 1")
     LiveData<Task> getTaskById(int taskId);
+
+    // ADICIONE ESTE MÉTODO para carregar uma tarefa sem LiveData para edição
+    @Query("SELECT * FROM Task WHERE id = :taskId LIMIT 1")
+    Task getTaskByIdSync(int taskId); // <--- NOVO MÉTODO
 }
-
-
-

@@ -1,63 +1,147 @@
 package com.example.projetoplanner;
 
+import android.app.AlertDialog; // Importação adicionada para AlertDialog
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable; // Import para @Nullable
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-// Importar a classe de binding correta para fragment_edit_task.xml
-import com.example.projetoplanner.databinding.FragmentEditTaskBinding; // Verifique o nome exato da classe gerada
+import com.example.projetoplanner.databinding.FragmentEditTaskBinding;
+import com.example.projetoplanner.database.PlannerDatabase;
+import com.example.projetoplanner.dao.TaskDao;
+import com.example.projetoplanner.entities.Task;
+
+import java.util.concurrent.Executors;
 
 public class EditTaskFragment extends Fragment {
 
-    private FragmentEditTaskBinding binding; // Variável para o View Binding
+    private FragmentEditTaskBinding binding;
+    private TaskDao taskDao;
+    private int taskId = -1; // Para saber se estamos editando (-1 para nova tarefa)
 
     @Override
     public View onCreateView(
-            @NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState
+            @NonNull LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState
     ) {
-        // Infla o layout para este fragmento usando View Binding
         binding = FragmentEditTaskBinding.inflate(inflater, container, false);
-        return binding.getRoot(); // Retorna a View raiz do layout
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // AQUI VOCÊ ADICIONARÁ A LÓGICA DO SEU EDITTASKFRAGMENT
-        // (Ex: obter argumentos, preencher campos, configurar listeners de botões de salvar/cancelar)
+        PlannerDatabase db = PlannerDatabase.getDatabase(requireContext());
+        taskDao = db.taskDao();
 
-        // Exemplo: Se você tiver um botão de salvar no seu layout com id 'button_save_task'
-        /*
+        // 1. Checar se estamos editando uma tarefa existente
+        if (getArguments() != null) {
+            taskId = getArguments().getInt("taskId", -1); // O -1 é um valor padrão caso não encontre
+        }
+
+        if (taskId != -1) {
+            // Se for para editar, carregue a tarefa do banco de dados
+            binding.textViewEditTaskTitle.setText("Editar Tarefa");
+            // Mostrar o botão de excluir apenas na edição
+            binding.buttonDeleteTask.setVisibility(View.VISIBLE); //
+            Executors.newSingleThreadExecutor().execute(() -> {
+                Task taskToEdit = taskDao.getTaskByIdSync(taskId); // Crie este método no DAO
+                requireActivity().runOnUiThread(() -> {
+                    if (taskToEdit != null) {
+                        binding.editTextTaskDescription.setText(taskToEdit.getDescricao()); //
+                        binding.checkBoxTaskCompleted.setChecked(taskToEdit.getStatus()); //
+                    } else {
+                        Toast.makeText(getContext(), "Tarefa não encontrada.", Toast.LENGTH_SHORT).show(); //
+                        NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Voltar se não encontrar
+                    }
+                });
+            });
+        } else {
+            // Ocultar o botão de excluir para novas tarefas
+            binding.textViewEditTaskTitle.setText("Nova Tarefa"); //
+            binding.buttonDeleteTask.setVisibility(View.GONE); //
+        }
+
+        // 2. Botão Salvar
         binding.buttonSaveTask.setOnClickListener(v -> {
-            // Lógica para salvar ou atualizar a tarefa
-            // NavHostFragment.findNavController(EditTaskFragment.this)
-            //         .navigate(R.id.action_editTaskFragment_to_taskListFragment); // Voltar para a lista
-        });
-        */
+            String description = binding.editTextTaskDescription.getText().toString().trim(); //
+            boolean isCompleted = binding.checkBoxTaskCompleted.isChecked(); //
 
-        // Lógica para obter o argumento taskId, se houver
-        // if (getArguments() != null) {
-        //     int taskId = EditTaskFragmentArgs.fromBundle(getArguments()).getTaskId();
-        //     if (taskId != -1) {
-        //         // É modo de edição, carregue a tarefa
-        //     } else {
-        //         // É modo de adição de nova tarefa
-        //     }
-        // }
+            if (description.isEmpty()) {
+                Toast.makeText(getContext(), "A descrição da tarefa não pode estar vazia.", Toast.LENGTH_SHORT).show(); //
+                return;
+            }
+
+            Executors.newSingleThreadExecutor().execute(() -> {
+                if (taskId == -1) {
+                    // Nova tarefa
+                    Task newTask = new Task(description, isCompleted); //
+                    long newId = taskDao.insertTask(newTask); //
+                    requireActivity().runOnUiThread(() -> {
+                        if (newId > 0) {
+                            Toast.makeText(getContext(), "Tarefa adicionada!", Toast.LENGTH_SHORT).show(); //
+                            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Volta para TaskList
+                        } else {
+                            Toast.makeText(getContext(), "Erro ao adicionar tarefa.", Toast.LENGTH_SHORT).show(); //
+                        }
+                    });
+                } else {
+                    // Atualizar tarefa existente
+                    Task taskToUpdate = new Task(description, isCompleted); //
+                    taskToUpdate.id = taskId; // Definir o ID para a atualização
+                    int updatedRows = taskDao.updateTask(taskToUpdate); //
+                    requireActivity().runOnUiThread(() -> {
+                        if (updatedRows > 0) {
+                            Toast.makeText(getContext(), "Tarefa atualizada!", Toast.LENGTH_SHORT).show(); //
+                            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Volta para TaskList
+                        } else {
+                            Toast.makeText(getContext(), "Erro ao atualizar tarefa.", Toast.LENGTH_SHORT).show(); //
+                        }
+                    });
+                }
+            });
+        });
+
+        // 3. Botão Cancelar
+        binding.buttonCancel.setOnClickListener(v -> {
+            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Simplesmente volta para a tela anterior
+        });
+
+        // 4. Botão Excluir (apenas visível ao editar)
+        binding.buttonDeleteTask.setOnClickListener(v -> { //
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Excluir Tarefa") //
+                    .setMessage("Tem certeza que deseja excluir esta tarefa?") //
+                    .setPositiveButton("Sim", (dialog, which) -> { //
+                        Executors.newSingleThreadExecutor().execute(() -> { //
+                            Task taskToDelete = new Task("", false); // Descrição e status não importam para exclusão por ID
+                            taskToDelete.id = taskId; //
+                            int deletedRows = taskDao.deleteTask(taskToDelete); //
+                            requireActivity().runOnUiThread(() -> { //
+                                if (deletedRows > 0) {
+                                    Toast.makeText(getContext(), "Tarefa excluída!", Toast.LENGTH_SHORT).show(); //
+                                    NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Volta para TaskList
+                                } else {
+                                    Toast.makeText(getContext(), "Erro ao excluir tarefa.", Toast.LENGTH_SHORT).show(); //
+                                }
+                            });
+                        });
+                    })
+                    .setNegativeButton("Não", null) //
+                    .show(); //
+        });
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        // Limpa a referência do binding para evitar vazamentos de memória
-        binding = null;
+        super.onDestroyView(); //
+        binding = null; //
     }
 }

@@ -65,7 +65,7 @@
     <fragment
         android:id="@+id/editTaskFragment"
         android:name="com.example.projetoplanner.EditTaskFragment"
-        android:label="{taskTitle}"
+        android:label="Editar tarefa"
         tools:layout="@layout/fragment_edit_task">
 
         <argument

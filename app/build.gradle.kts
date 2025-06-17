@@ -39,7 +39,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout) // Você tinha duplicado esta linha, removi a segunda.
-
+    implementation ("androidx.cardview:cardview:1.0.0")
     // Navigation Component
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
@@ -50,7 +50,8 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.7.1") // Esta é a chave para o problema do Room
 
     // Testing Libraries
-    testImplementation(libs.junit) // Você tinha duplicado esta linha, mantive uma.
-    androidTestImplementation(libs.ext.junit) // Você tinha duplicado esta linha, mantive uma.
-    androidTestImplementation(libs.espresso.core) // Você tinha duplicado esta linha, mantive uma.
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+
 }
