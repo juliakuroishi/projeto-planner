@@ -12,25 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjetoPlanner"
         tools:targetApi="31">
-        <activity android:name=".LoginFragment"
-            android:exported="false" >
-        </activity>
-        <activity android:name=".TaskListFragment"
-            android:exported="false" >
-        </activity>
-        <activity android:name=".EditTaskFragment"
-            android:exported="false" >
-        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.ProjetoPlanner">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

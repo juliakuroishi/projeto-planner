@@ -3,26 +3,80 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/LoginFragment">
+    app:startDestination="@id/homeFragment"> <fragment
+    android:id="@+id/homeFragment" android:name="com.example.projetoplanner.HomeFragment"
+    android:label="Home"
+    tools:layout="@layout/fragment_home" >
+    <action
+        android:id="@+id/action_homeFragment_to_loginFragment"
+        app:destination="@id/loginFragment" />
+    <action
+        android:id="@+id/action_homeFragment_to_cadastroFragment"
+        app:destination="@id/cadastroFragment" />
+</fragment>
 
     <fragment
-        android:id="@+id/LoginFragment"
+        android:id="@+id/loginFragment"
         android:name="com.example.projetoplanner.LoginFragment"
-        android:label="Login Fragment"
+        android:label="Login"
         tools:layout="@layout/fragment_login">
 
         <action
-            android:id="@+id/action_LoginFragment_to_CadastroFragment"
-            app:destination="@id/CadastroFragment" />
+            android:id="@+id/action_loginFragment_to_cadastroFragment"
+            app:destination="@id/cadastroFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_taskListFragment"
+            app:destination="@id/taskListFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
-        android:id="@+id/CadastroFragment"
+        android:id="@+id/cadastroFragment"
         android:name="com.example.projetoplanner.CadastroFragment"
-        android:label="Cadastro Fragment"
+        android:label="Cadastro"
         tools:layout="@layout/fragment_cadastro">
 
         <action
-            android:id="@+id/action_CadastroFragment_to_LoginFragment"
-            app:destination="@id/LoginFragment" />
+            android:id="@+id/action_cadastroFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
+
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="com.example.projetoplanner.TaskListFragment"
+        android:label="Minhas Tarefas"
+        tools:layout="@layout/fragment_task_list">
+
+        <action
+            android:id="@+id/action_taskListFragment_to_editTaskFragment"
+            app:destination="@id/editTaskFragment" />
+
+        <action
+            android:id="@+id/action_taskListFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editTaskFragment"
+        android:name="com.example.projetoplanner.EditTaskFragment"
+        android:label="{taskTitle}"
+        tools:layout="@layout/fragment_edit_task">
+
+        <argument
+            android:name="taskId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+
+        <action
+            android:id="@+id/action_editTaskFragment_to_taskListFragment"
+            app:destination="@id/taskListFragment"
+            app:popUpToInclusive="false"/>
+    </fragment>
+
 </navigation>
