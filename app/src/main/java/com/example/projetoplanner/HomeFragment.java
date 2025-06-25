@@ -26,8 +26,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // ATENÇÃO: Verifique se btnEntrar e btnCadastrar existem no fragment_home.xml
-        // E se os IDs das ações estão em lowerCamelCase (minúsculas)
+
         binding.btnEntrar.setOnClickListener(v ->
                 NavHostFragment.findNavController(HomeFragment.this)
                         .navigate(R.id.action_homeFragment_to_loginFragment)

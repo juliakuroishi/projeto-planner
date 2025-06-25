@@ -23,7 +23,7 @@ public class EditTaskFragment extends Fragment {
 
     private FragmentEditTaskBinding binding;
     private TaskDao taskDao;
-    private int taskId = -1; // Para saber se estamos editando (-1 para nova tarefa)
+    private int taskId = -1;
 
     @Override
     public View onCreateView(
@@ -43,28 +43,27 @@ public class EditTaskFragment extends Fragment {
 
         // 1. Checar se estamos editando uma tarefa existente
         if (getArguments() != null) {
-            taskId = getArguments().getInt("taskId", -1); // O -1 é um valor padrão caso não encontre
+            taskId = getArguments().getInt("taskId", -1);
         }
 
         if (taskId != -1) {
-            // Se for para editar, carregue a tarefa do banco de dados
             binding.textViewEditTaskTitle.setText("Editar Tarefa");
-            // Mostrar o botão de excluir apenas na edição
-            binding.buttonDeleteTask.setVisibility(View.VISIBLE); //
+
+            binding.buttonDeleteTask.setVisibility(View.VISIBLE);
             Executors.newSingleThreadExecutor().execute(() -> {
-                Task taskToEdit = taskDao.getTaskByIdSync(taskId); // Crie este método no DAO
+                Task taskToEdit = taskDao.getTaskByIdSync(taskId);
                 requireActivity().runOnUiThread(() -> {
                     if (taskToEdit != null) {
                         binding.editTextTaskDescription.setText(taskToEdit.getDescricao()); //
                         binding.checkBoxTaskCompleted.setChecked(taskToEdit.getStatus()); //
                     } else {
                         Toast.makeText(getContext(), "Tarefa não encontrada.", Toast.LENGTH_SHORT).show(); //
-                        NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Voltar se não encontrar
+                        NavHostFragment.findNavController(EditTaskFragment.this).popBackStack();
                     }
                 });
             });
         } else {
-            // Ocultar o botão de excluir para novas tarefas
+
             binding.textViewEditTaskTitle.setText("Nova Tarefa"); //
             binding.buttonDeleteTask.setVisibility(View.GONE); //
         }
@@ -75,21 +74,20 @@ public class EditTaskFragment extends Fragment {
             boolean isCompleted = binding.checkBoxTaskCompleted.isChecked(); //
 
             if (description.isEmpty()) {
-                Toast.makeText(getContext(), "A descrição da tarefa não pode estar vazia.", Toast.LENGTH_SHORT).show(); //
+                Toast.makeText(getContext(), "A descrição da tarefa não pode estar vazia.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             Executors.newSingleThreadExecutor().execute(() -> {
                 if (taskId == -1) {
-                    // Nova tarefa
-                    Task newTask = new Task(description, isCompleted); //
-                    long newId = taskDao.insertTask(newTask); //
+                    Task newTask = new Task(description, isCompleted);
+                    long newId = taskDao.insertTask(newTask);
                     requireActivity().runOnUiThread(() -> {
                         if (newId > 0) {
-                            Toast.makeText(getContext(), "Tarefa adicionada!", Toast.LENGTH_SHORT).show(); //
-                            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Volta para TaskList
+                            Toast.makeText(getContext(), "Tarefa adicionada!", Toast.LENGTH_SHORT).show();
+                            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack();
                         } else {
-                            Toast.makeText(getContext(), "Erro ao adicionar tarefa.", Toast.LENGTH_SHORT).show(); //
+                            Toast.makeText(getContext(), "Erro ao adicionar tarefa.", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
@@ -99,10 +97,10 @@ public class EditTaskFragment extends Fragment {
                     int updatedRows = taskDao.updateTask(taskToUpdate); //
                     requireActivity().runOnUiThread(() -> {
                         if (updatedRows > 0) {
-                            Toast.makeText(getContext(), "Tarefa atualizada!", Toast.LENGTH_SHORT).show(); //
-                            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Volta para TaskList
+                            Toast.makeText(getContext(), "Tarefa atualizada!", Toast.LENGTH_SHORT).show();
+                            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack();
                         } else {
-                            Toast.makeText(getContext(), "Erro ao atualizar tarefa.", Toast.LENGTH_SHORT).show(); //
+                            Toast.makeText(getContext(), "Erro ao atualizar tarefa.", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -111,37 +109,37 @@ public class EditTaskFragment extends Fragment {
 
         // 3. Botão Cancelar
         binding.buttonCancel.setOnClickListener(v -> {
-            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Simplesmente volta para a tela anterior
+            NavHostFragment.findNavController(EditTaskFragment.this).popBackStack();
         });
 
         // 4. Botão Excluir (apenas visível ao editar)
-        binding.buttonDeleteTask.setOnClickListener(v -> { //
+        binding.buttonDeleteTask.setOnClickListener(v -> {
             new AlertDialog.Builder(getContext())
-                    .setTitle("Excluir Tarefa") //
-                    .setMessage("Tem certeza que deseja excluir esta tarefa?") //
-                    .setPositiveButton("Sim", (dialog, which) -> { //
-                        Executors.newSingleThreadExecutor().execute(() -> { //
-                            Task taskToDelete = new Task("", false); // Descrição e status não importam para exclusão por ID
-                            taskToDelete.id = taskId; //
-                            int deletedRows = taskDao.deleteTask(taskToDelete); //
-                            requireActivity().runOnUiThread(() -> { //
+                    .setTitle("Excluir Tarefa")
+                    .setMessage("Tem certeza que deseja excluir esta tarefa?")
+                    .setPositiveButton("Sim", (dialog, which) -> {
+                        Executors.newSingleThreadExecutor().execute(() -> {
+                            Task taskToDelete = new Task("", false);
+                            taskToDelete.id = taskId;
+                            int deletedRows = taskDao.deleteTask(taskToDelete);
+                            requireActivity().runOnUiThread(() -> {
                                 if (deletedRows > 0) {
-                                    Toast.makeText(getContext(), "Tarefa excluída!", Toast.LENGTH_SHORT).show(); //
-                                    NavHostFragment.findNavController(EditTaskFragment.this).popBackStack(); // Volta para TaskList
+                                    Toast.makeText(getContext(), "Tarefa excluída!", Toast.LENGTH_SHORT).show();
+                                    NavHostFragment.findNavController(EditTaskFragment.this).popBackStack();
                                 } else {
-                                    Toast.makeText(getContext(), "Erro ao excluir tarefa.", Toast.LENGTH_SHORT).show(); //
+                                    Toast.makeText(getContext(), "Erro ao excluir tarefa.", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         });
                     })
-                    .setNegativeButton("Não", null) //
-                    .show(); //
+                    .setNegativeButton("Não", null)
+                    .show();
         });
     }
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView(); //
-        binding = null; //
+        super.onDestroyView();
+        binding = null;
     }
 }

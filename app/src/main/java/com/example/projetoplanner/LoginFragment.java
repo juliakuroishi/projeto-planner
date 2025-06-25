@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 public class LoginFragment extends Fragment {
 
     private FragmentLoginBinding binding;
-    private UserDao userDao; // Instância do DAO
+    private UserDao userDao;
 
     @Override
     public View onCreateView(
@@ -36,17 +36,13 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Inicializa o DAO
         PlannerDatabase db = PlannerDatabase.getDatabase(requireContext());
         userDao = db.userDao();
 
-        // **Melhoria dos IDs dos EditTexts em fragment_login.xml:**
-        // Considere renomear editTextText para editTextUsername e editTextTextPassword para editTextPassword
-        // Se você renomear, ajuste as linhas abaixo de acordo.
 
         binding.btnEntrar.setOnClickListener(v -> {
             String username = binding.editTextText.getText().toString().trim();
-            String password = binding.editTextTextPassword.getText().toString().trim();
+            String password = binding.editTextPassword.getText().toString().trim();
 
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(getContext(), "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
@@ -58,18 +54,15 @@ public class LoginFragment extends Fragment {
 
                 requireActivity().runOnUiThread(() -> {
                     if (user == null) {
-                        // Usuário não encontrado
-                        Toast.makeText(getContext(), "Usuário não cadastrado.", Toast.LENGTH_SHORT).show(); // Requisito: um usuário não cadastrado conseguir acessar o sistema
+
+                        Toast.makeText(getContext(), "Usuário não cadastrado.", Toast.LENGTH_SHORT).show();
                     } else {
-                        // Verificar a senha
+
                         if (PasswordUtils.verifyPassword(password, user.getPasswordHash(), user.getSalt())) {
-                            Toast.makeText(getContext(), "Login bem-sucedido!", Toast.LENGTH_SHORT).show();
-                            // TODO: Salvar o estado de login do usuário (ex: SharedPreferences)
-                            // Navegar para a tela de Tarefas (TaskListFragment)
+                            //Toast.makeText(getContext(), "Login bem-sucedido!", Toast.LENGTH_SHORT).show();
                             NavHostFragment.findNavController(LoginFragment.this)
-                                    .navigate(R.id.action_loginFragment_to_taskListFragment); // Ação do nav_graph
+                                    .navigate(R.id.action_loginFragment_to_taskListFragment);
                         } else {
-                            // Senha incorreta
                             Toast.makeText(getContext(), "Senha incorreta.", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -77,12 +70,7 @@ public class LoginFragment extends Fragment {
             });
         });
 
-        // Se você tiver um botão "Criar Cadastro" no login
-        // Exemplo:
-        // binding.btnCriarCadastro.setOnClickListener(v -> {
-        //     NavHostFragment.findNavController(LoginFragment.this)
-        //             .navigate(R.id.action_loginFragment_to_cadastroFragment); // CORRIGIDO: de LoginFragment para loginFragment, CadastroFragment para cadastroFragment
-        // });
+
     }
 
     @Override
